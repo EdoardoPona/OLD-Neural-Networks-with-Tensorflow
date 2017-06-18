@@ -1,12 +1,8 @@
 """Convolutional Neural Network for MNIST"""
 from tensorflow.examples.tutorials.mnist import input_data
 import tensorflow as tf
-import utils
-import random
 
 mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
-
-# images, cls, labels = utils.get_data('train.csv', flat=True)              # using data from Kaggle
 
 
 # helper functions for creating weights and biases
@@ -30,19 +26,6 @@ def max_pool(x):
 def avg_pool(x):
     return tf.nn.avg_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
-
-"""def get_batch(l):
-    r = random.randint(0, len(images) - l)
-    return images[r:r+l], labels[r:r+l]"""
-
-
-def show_random_prediction(sess):
-    """printing out the prediction of a random number and plotting it"""
-    j = random.randint(0, len(test_images))
-    test_image = test_images[j - 1:j]
-    # print test_image.shape
-    print sess.run(tf.argmax(y, 1), feed_dict={x: test_image, keep_prob: 1.0})
-    utils.plot_image(test_image)
 
 x = tf.placeholder(tf.float32, shape=[None, 784])     # placeholder for inputs (28x28 images)
 y_ = tf.placeholder(tf.float32, shape=[None, 10])     # placeholder for labels , 10 classes
@@ -91,16 +74,11 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
-# test_images = utils.get_test_data('test.csv', flat=True)
 for i in xrange(3000):
     batch = mnist.train.next_batch(150)       # training on mnist data from tensorflow
-    # batch = get_batch(150)          # training on the data from kaggle (train.csv)
 
     if i % 10 == 0:
         acc = accuracy.eval(feed_dict={x: batch[0], y_: batch[1], keep_prob: 1.0}, session=sess)
         print 'Step: ', i, '\t Accuracy:', acc
 
     sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
-
-# predictions = sess.run(tf.argmax(y, 1), feed_dict={x: test_images, keep_prob: 1.0})
-# utils.write_csv('submission.csv', predictions)
