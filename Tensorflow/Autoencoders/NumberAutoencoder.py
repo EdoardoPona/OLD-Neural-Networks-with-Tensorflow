@@ -56,11 +56,8 @@ for i in xrange(int(5e4)):
     if i % 500 == 0:
         print 'Iteration: {0} \n Cost: {1}'.format(i, cost)
 
+# testing once 
 array = make_data(1)
 print array
 output = sess.run(output, feed_dict={x: array}).astype(np.int32)
 print output
-
-for i in xrange(len(array[0])):
-    print array[0, i]
-    print output[0, i], '\n'
