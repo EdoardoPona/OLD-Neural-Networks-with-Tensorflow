@@ -1,4 +1,4 @@
-"""NumberAutoencoder.py, but coded better, look more like some final product"""
+"""NumberAutoencoder.py, but coded better, looks more like some final product"""
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
@@ -26,7 +26,7 @@ x = tf.placeholder(tf.float32, shape=[batch_size, input_len])
 
 # model_shape = [input_len, 50, 30, 20, 15]     for input_len = 25
 # model_shape = [input_len, 120, 80, 50, 30]    for input_len = 50
-model_shape = [input_len, 500, 400, 300, 250]
+model_shape = [input_len, 500, 400, 300, 250]   # good for mnist images
 print 'Model shape: ', model_shape
 
 weights = [weight([model_shape[i], model_shape[i+1]]) for i in xrange(len(model_shape) - 1)]
@@ -49,6 +49,7 @@ for i in xrange(len(model_shape) - 2):
 
 output = tf.matmul(h, weights[i+1], transpose_b=True) - biases[i+2]
 
+
 cost = tf.reduce_mean(tf.abs(x - output))
 train_step = tf.train.AdamOptimizer(5e-4).minimize(cost)
 
@@ -64,6 +65,7 @@ for i in xrange(int(1e4)):
     if i % 250 == 0:
         print 'Iteration: {0} \n Cost: {1}'.format(i, cost)
 
+# testing once 
 # array = make_data([1, input_len])
 array = mnist.train.next_batch(1)[0]
 output = np.reshape(sess.run(output, feed_dict={x: array}), [28, 28])
@@ -71,5 +73,6 @@ array = np.reshape(array, [28, 28])
 
 plt.imshow(array)
 plt.show()
+
 plt.imshow(output)
 plt.show()
