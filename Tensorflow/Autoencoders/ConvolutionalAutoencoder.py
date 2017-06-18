@@ -4,17 +4,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 from tensorflow.examples.tutorials.mnist import input_data
-import utils
+import utils 
 import cv2
 
 
 # mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
-# images, _, _ = utils.get_data('data.csv', flat=False, rgb=False)
 
 im_w = 96
 im_h = 54
 im_ch = 3       # number of color channels
-images = utils.get_image_data('me', size=[im_w, im_h])
+images = utils.get_image_data('me', size=[im_w, im_h])          # returns all the images in the 'me/' directory
 print 'Finished loading data'
 
 
@@ -57,8 +56,8 @@ batch_size = 50
 x = tf.placeholder(tf.float32, shape=[None, im_h, im_w, im_ch])
 
 # encoder weights and biases
-w_conv1 = weight([15, 15, im_ch, 160])            # the first two dimensions are the patch size, then the n of inputs and outputs
-b_conv1 = bias([160])
+w_conv1 = weight([15, 15, im_ch, 300])            # the first two dimensions are the patch size, then the n of inputs and outputs
+b_conv1 = bias([300])
 
 b_deconv1 = bias([im_ch])
 
@@ -69,15 +68,13 @@ h_conv1 = tf.nn.relu(conv2d(x, w_conv1) + b_conv1)
 
 
 # decoder
-output = tf.nn.relu(deconv2d(h_conv1, w_conv1, [tf.shape(x)[0], im_h, im_w, im_ch]) + b_deconv1)    # shouldn't really use relu here,
-# but it gives better results
+output = tf.nn.relu(deconv2d(h_conv1, w_conv1, [tf.shape(x)[0], im_h, im_w, im_ch]) + b_deconv1)    # using relu gives better results 
 
 
 # cost and optimizer
-l_rate = tf.placeholder(tf.float32)
 
 cost = tf.div(tf.reduce_mean(tf.square(tf.subtract(output, x))), 2)   # mean squared error
-train_step = tf.train.AdamOptimizer(l_rate).minimize(cost)
+train_step = tf.train.AdamOptimizer(5e-4).minimize(cost)
 
 run_list = [train_step, cost]
 
@@ -85,26 +82,20 @@ sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 # training
-lr = 1e-3   # initial learning rate
 batch_size = 100
-n_iters = 500           # needs may more iterations for real images
+n_iters = 1000           
 print 'Starting Training'
 for i in xrange(n_iters):
     # data = mnist.train.next_batch(batch_size)[0]        # [0] are the images, [1] are the labels which we don't need
     data = utils.get_batch_only_imgaes(batch_size, images)
-    _, cost = sess.run(run_list, feed_dict={x: data, l_rate: lr})           # performing train_step, getting the cost
+    _, cost = sess.run(run_list, feed_dict={x: data})           # performing train_step, getting the cost
 
     if i % 5 == 0 or i==n_iters:
         print 'Iteration: {0} Cost: {1}'.format(i, cost)
-
+        
+# testing once 
 array = utils.get_batch_only_imgaes(batch_size, images)
 output = sess.run(output, feed_dict={x: array})
 
-"""for i in xrange(output.shape[0]):
-    out = np.reshape(output[i], [28, 28]).astype(np.float32)
-    arr = np.reshape(array[i], [28, 28]).astype(np.float32)
-    save_image(out, 'OUT/MNIST/' + str(i) + '.jpg')
-    save_image(arr, 'IMG/MNIST/' + str(i) + '.jpg')"""
-
-plot(array[0])# .astype(np.float32)
-plot(output[0])# .astype(np.float32)
+plot(array[0])
+plot(output[0])
