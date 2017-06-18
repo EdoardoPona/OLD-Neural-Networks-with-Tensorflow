@@ -57,7 +57,7 @@ x = tf.placeholder(tf.float32, shape=[None, im_h, im_w, im_ch])
 
 # encoder weights and biases
 # w_conv1 = weight([5, 5, im_ch, 300])      for mnist
-w_conv1 = weight([12, 12, im_ch, 1700])     # 2500 for face_autoencoder0.ckpt
+w_conv1 = weight([12, 12, im_ch, 1700])     # 2500 for face_autoencoder0.ckpt, it performs well because the 2500 is very big
 b_conv1 = bias([1700])
 
 b_deconv1 = bias([im_ch])
@@ -83,7 +83,7 @@ run_list = [cost, train_step]
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
-saver = tf.train.Saver(write_version=tf.train.SaverDef.V1, max_to_keep=1)
+saver = tf.train.Saver(write_version=tf.train.SaverDef.V1, max_to_keep=1)       # saving variables 
 saver.restore(sess=sess, save_path='Checkpoints/face_autoencoder1.ckpt')
 
 
@@ -106,9 +106,7 @@ def train(iter_num):
 
 # train(5000)
 
-# array = utils.get_batch_only_imgaes(1, images)
-# array = np.reshape(array, [array.shape[0], array.shape[1], array.shape[2], 1])
-
+# testing once 
 input_image = np.array(cv2.resize(cv2.imread('me/1/0.jpg', 0), (47, 70)))
 input_image = np.reshape(input_image, [1, 70, 47, 1])
 
