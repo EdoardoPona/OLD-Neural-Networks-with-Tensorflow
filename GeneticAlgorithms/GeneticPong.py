@@ -1,3 +1,5 @@
+""" In theory this algorithm should slowly learn to play pong on its own... I am still testing it though so I don't know
+if it works, or how long it takes for it to learn. """
 from __future__ import division
 import math
 import random
